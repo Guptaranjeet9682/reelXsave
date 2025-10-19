@@ -1,281 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaSave Pro - Download Instagram Reels in HD</title>
-    <meta name="description" content="Free professional Instagram Reels downloader. Download HD videos, audio, and stories without watermark.">
+    <title>InstaSave - Download Instagram Reels</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
-    <!-- Animated Background -->
-    <div class="animated-bg"></div>
-    
-    <div class="container mx-auto px-4 py-8 relative z-10">
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <header class="text-center mb-16 animate-fade-in-down">
-            <div class="flex items-center justify-center mb-6">
-                <div class="relative">
-                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30">
-                        <i class="fas fa-download text-white text-2xl"></i>
-                    </div>
-                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-4 border-slate-900 animate-pulse"></div>
-                </div>
-                <h1 class="ml-4 text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    InstaSave Pro
-                </h1>
-            </div>
-            <p class="text-xl text-gray-300 mb-2">Download Instagram Reels, Stories & Posts</p>
-            <p class="text-gray-400">HD Quality • Fast • Free • No Watermark</p>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-blue-500 mb-4">
+                <i class="fas fa-download mr-3"></i>
+                InstaSave Pro
+            </h1>
+            <p class="text-gray-300 text-lg">Download Instagram Reels in HD Quality</p>
         </header>
 
-        <!-- Stats -->
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in-up">
-            <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 text-center border border-white/10 hover:transform hover:scale-105 transition-all duration-300">
-                <i class="fas fa-bolt text-yellow-400 text-2xl mb-3"></i>
-                <div class="text-3xl font-bold text-white">5M+</div>
-                <div class="text-gray-400">Downloads</div>
-            </div>
-            <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 text-center border border-white/10 hover:transform hover:scale-105 transition-all duration-300">
-                <i class="fas fa-shield-alt text-green-400 text-2xl mb-3"></i>
-                <div class="text-3xl font-bold text-white">100%</div>
-                <div class="text-gray-400">Safe & Secure</div>
-            </div>
-            <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 text-center border border-white/10 hover:transform hover:scale-105 transition-all duration-300">
-                <i class="fas fa-rocket text-blue-400 text-2xl mb-3"></i>
-                <div class="text-3xl font-bold text-white">HD</div>
-                <div class="text-gray-400">Quality</div>
-            </div>
-        </div>
-
-        <!-- Main Download Section -->
-        <div class="max-w-2xl mx-auto animate-fade-in-up">
-            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 shadow-2xl shadow-purple-500/10">
-                <form id="downloadForm" class="space-y-6">
-                    <div class="relative group">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="urlInput"
-                                placeholder="Paste Instagram Reel URL here (e.g., https://www.instagram.com/reel/...)"
-                                class="w-full p-5 bg-slate-800/50 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg backdrop-blur-lg"
-                            >
-                            <button 
-                                type="button" 
-                                id="pasteBtn"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition duration-300"
-                            >
-                                <i class="fas fa-paste mr-2"></i>Paste
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <button 
-                        type="submit"
-                        id="downloadBtn"
-                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-5 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 text-lg group relative overflow-hidden"
+        <!-- Main Input Section -->
+        <div class="max-w-2xl mx-auto bg-gray-800 rounded-2xl p-6 shadow-2xl">
+            <form id="downloadForm" class="space-y-4">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="urlInput"
+                        placeholder="Paste Instagram Reel URL here..."
+                        class="w-full p-4 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-lg"
                     >
-                        <span class="relative z-10 flex items-center justify-center">
-                            <i class="fas fa-download mr-3"></i>
-                            Download Now
-                        </span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition duration-1000"></div>
+                    <button 
+                        type="button" 
+                        id="pasteBtn"
+                        class="absolute right-2 top-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                    >
+                        <i class="fas fa-paste mr-2"></i>Paste
                     </button>
-                </form>
-            </div>
+                </div>
+                <button 
+                    type="submit"
+                    id="downloadBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition text-lg"
+                >
+                    <i class="fas fa-download mr-2"></i>
+                    Download Reel
+                </button>
+            </form>
         </div>
 
         <!-- Loader -->
-        <div id="loader" class="hidden max-w-2xl mx-auto mt-8 animate-fade-in">
-            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 text-center">
-                <div class="relative inline-block">
-                    <div class="w-20 h-20 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin-slow"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fas fa-download text-blue-400 text-xl"></i>
-                    </div>
-                </div>
-                <p class="mt-4 text-gray-300 text-lg">Processing your request...</p>
-                <p class="text-gray-500">Fetching HD quality video</p>
-                <div class="mt-4 w-full bg-gray-700 rounded-full h-2">
-                    <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full animate-pulse-loading"></div>
-                </div>
-            </div>
+        <div id="loader" class="hidden max-w-2xl mx-auto mt-8 text-center">
+            <div class="loader mx-auto"></div>
+            <p class="mt-4 text-gray-300">Fetching your reel...</p>
         </div>
 
         <!-- Error Message -->
-        <div id="error" class="hidden max-w-2xl mx-auto mt-8 animate-shake">
-            <div class="bg-red-500/10 backdrop-blur-lg border border-red-500/20 p-6 rounded-2xl text-red-200">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle text-red-400 text-xl mr-3"></i>
-                    <h3 class="font-semibold">Error</h3>
-                </div>
-                <p id="errorText" class="mt-2"></p>
-                <button id="retryBtn" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition duration-300">
-                    <i class="fas fa-redo mr-2"></i>Try Again
-                </button>
+        <div id="error" class="hidden max-w-2xl mx-auto mt-8 bg-red-900 border border-red-700 p-4 rounded-xl">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle text-red-400 mr-3"></i>
+                <h3 class="font-bold">Error</h3>
             </div>
+            <p id="errorText" class="mt-2"></p>
+            <button id="retryBtn" class="mt-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                Try Again
+            </button>
         </div>
 
         <!-- Results -->
-        <div id="results" class="hidden max-w-4xl mx-auto mt-8 animate-fade-in-up">
-            <div class="bg-white/5 backdrop-blur-lg rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                <!-- Preview Section -->
-                <div class="relative group">
-                    <img id="reelThumbnail" class="w-full h-80 object-cover" alt="Reel preview">
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-300 flex items-center justify-center">
-                        <button class="play-btn opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition duration-300">
-                            <i class="fas fa-play text-white text-4xl"></i>
+        <div id="results" class="hidden max-w-2xl mx-auto mt-8 fade-in">
+            <div class="bg-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4" id="reelTitle">Instagram Reel</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-center text-gray-300">
+                            <i class="fas fa-clock text-green-400 mr-2"></i>
+                            <span id="reelDuration">--</span>
+                        </div>
+                        <div class="flex items-center text-gray-300">
+                            <i class="fas fa-weight text-blue-400 mr-2"></i>
+                            <span id="reelSize">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Download Buttons -->
+                    <div class="space-y-3">
+                        <button id="downloadVideo" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition">
+                            <i class="fas fa-video mr-2"></i>
+                            Download Video (MP4)
+                        </button>
+                        <button id="downloadAudio" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-xl transition">
+                            <i class="fas fa-music mr-2"></i>
+                            Download Audio (MP3)
+                        </button>
+                        <button id="copyLink" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Download Link
                         </button>
                     </div>
-                    <div class="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                        <i class="fas fa-hd mr-1"></i>HD Ready
-                    </div>
-                </div>
-
-                <!-- Info Section -->
-                <div class="p-8">
-                    <div class="flex flex-col lg:flex-row gap-8">
-                        <!-- Media Info -->
-                        <div class="flex-1">
-                            <h2 id="reelTitle" class="text-2xl font-bold text-white mb-4">Instagram Reel</h2>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <div class="flex items-center text-gray-300">
-                                    <i class="fas fa-user text-blue-400 mr-3 text-lg"></i>
-                                    <span id="reelAuthor">Instagram User</span>
-                                </div>
-                                <div class="flex items-center text-gray-300">
-                                    <i class="fas fa-clock text-green-400 mr-3 text-lg"></i>
-                                    <span id="reelDuration">-- seconds</span>
-                                </div>
-                                <div class="flex items-center text-gray-300">
-                                    <i class="fas fa-weight text-purple-400 mr-3 text-lg"></i>
-                                    <span id="reelSize">--</span>
-                                </div>
-                                <div class="flex items-center text-gray-300">
-                                    <i class="fas fa-tachometer-alt text-yellow-400 mr-3 text-lg"></i>
-                                    <span id="reelQuality">--</span>
-                                </div>
-                            </div>
-
-                            <!-- Quality Selector -->
-                            <div class="mb-6">
-                                <label class="block text-gray-300 mb-3 font-semibold">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>Select Quality:
-                                </label>
-                                <div id="qualityOptions" class="flex flex-wrap gap-3">
-                                    <!-- Quality buttons will be added here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Download Actions -->
-                        <div class="lg:w-80 space-y-4">
-                            <!-- Primary Download -->
-                            <button id="downloadHd" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 group">
-                                <i class="fas fa-download mr-2"></i>
-                                Download HD Video
-                                <div class="text-sm font-normal mt-1">Best Quality • MP4</div>
-                            </button>
-
-                            <!-- Audio Download -->
-                            <button id="downloadAudio" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25">
-                                <i class="fas fa-music mr-2"></i>
-                                Extract Audio
-                                <div class="text-sm font-normal mt-1">MP3 Format</div>
-                            </button>
-
-                            <!-- Additional Actions -->
-                            <div class="grid grid-cols-2 gap-3">
-                                <button id="copyLink" class="bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl transition duration-300 border border-white/10">
-                                    <i class="fas fa-copy mr-2"></i>Copy Link
-                                </button>
-                                <button id="shareBtn" class="bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl transition duration-300 border border-white/10">
-                                    <i class="fas fa-share mr-2"></i>Share
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Features -->
-        <div class="max-w-6xl mx-auto mt-20 animate-fade-in-up">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Why Choose InstaSave Pro?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="feature-card group">
-                    <div class="feature-icon bg-blue-500/20 text-blue-400">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>Lightning Fast</h3>
-                    <p>Download reels in seconds with our optimized servers</p>
-                </div>
-                <div class="feature-card group">
-                    <div class="feature-icon bg-green-500/20 text-green-400">
-                        <i class="fas fa-hd"></i>
-                    </div>
-                    <h3>HD Quality</h3>
-                    <p>Get the highest available quality for all downloads</p>
-                </div>
-                <div class="feature-card group">
-                    <div class="feature-icon bg-purple-500/20 text-purple-400">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>100% Safe</h3>
-                    <p>No login required. Your privacy is protected</p>
-                </div>
-                <div class="feature-card group">
-                    <div class="feature-icon bg-orange-500/20 text-orange-400">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Mobile Friendly</h3>
-                    <p>Works perfectly on all devices and browsers</p>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="max-w-4xl mx-auto mt-20 pt-8 border-t border-white/10 text-center animate-fade-in">
-            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                <div class="text-gray-400">
-                    © 2024 InstaSave Pro. Educational purpose only.
-                </div>
-                
-                <div class="flex items-center space-x-2 text-gray-400">
-                    <span>Built with</span>
-                    <i class="fas fa-heart text-red-400 animate-pulse"></i>
-                    <span>by Your Name</span>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="mt-4 text-sm text-gray-500">
-                This tool is not affiliated with Instagram or Meta. Use responsibly and respect content creators.
-            </div>
+        <footer class="max-w-2xl mx-auto mt-12 text-center text-gray-500">
+            <p>For educational purposes only. Respect Instagram's Terms of Service.</p>
+            <p class="mt-2">Built with ❤️ by Your Name</p>
         </footer>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white p-4 rounded-2xl shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            <span id="toastMessage">Success!</span>
-        </div>
     </div>
 
     <script src="script.js"></script>
