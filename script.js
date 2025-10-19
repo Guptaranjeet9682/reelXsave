@@ -85,21 +85,34 @@ function isValidInstagramUrl(url) {
     return instagramRegex.test(url);
 }
 
-// Fetch Reel Data
+// Fetch Reel Data - UPDATED FOR YOUR API
 async function fetchReelData(url) {
     showLoader();
     hideError();
     hideResults();
 
     try {
-        // Simulate API delay for better UX
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Add loading animation
+        elements.downloadBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Fetching...';
         
         const response = await fetch(API_URL + encodeURIComponent(url));
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
         const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to fetch reel data');
+        console.log('API Response:', data); // For debugging
+
+        // Check if API returned error
+        if (data.error) {
+            throw new Error(data.error || 'API returned an error');
+        }
+
+        // Check if we have valid result data
+        if (!data.result || !data.result.url) {
+            throw new Error('No video URL found in the response');
         }
 
         processReelData(data);
@@ -107,28 +120,35 @@ async function fetchReelData(url) {
         
     } catch (err) {
         console.error('Fetch error:', err);
-        showError('Failed to download reel. Please check the URL and try again.');
+        showError(err.message || 'Failed to download reel. Please check the URL and try again.');
     } finally {
         hideLoader();
     }
 }
 
-// Process and Display Results
+// Process and Display Results - UPDATED FOR YOUR API
 function processReelData(data) {
-    // Get download URL (handle different response formats)
-    const downloadUrl = data.video || data.url || 
-                       (data.media && data.media[0] && data.media[0].url) || 
-                       (data.media && data.media.url);
-
-    if (!downloadUrl) {
+    const result = data.result;
+    
+    if (!result || !result.url) {
         showError('No video found in this reel');
         return;
     }
 
     currentReelData = {
-        ...data,
-        downloadUrl: downloadUrl,
-        qualities: data.media || [{ url: downloadUrl, quality: 'hd' }]
+        title: 'Instagram Reel',
+        author: 'Instagram User',
+        duration: result.duration || '--',
+        quality: result.quality || 'HD',
+        size: result.formattedSize || result.size || '--',
+        downloadUrl: result.url,
+        extension: result.extension || 'mp4',
+        qualities: [{
+            url: result.url,
+            quality: result.quality || 'hd',
+            size: result.formattedSize,
+            extension: result.extension
+        }]
     };
 
     displayResults();
@@ -138,20 +158,16 @@ function processReelData(data) {
 function displayResults() {
     if (!currentReelData) return;
 
-    // Set thumbnail with fallback
-    if (currentReelData.thumbnail || currentReelData.image) {
-        elements.reelThumbnail.src = currentReelData.thumbnail || currentReelData.image;
-        elements.reelThumbnail.classList.remove('hidden');
-    } else {
-        elements.reelThumbnail.classList.add('hidden');
-    }
+    // Set default thumbnail since API doesn't provide one
+    elements.reelThumbnail.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%231e293b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="%239ca3af">Instagram Reel</text></svg>';
+    elements.reelThumbnail.classList.remove('hidden');
 
     // Set content information
-    elements.reelTitle.textContent = currentReelData.title || 'Instagram Reel';
-    elements.reelAuthor.textContent = currentReelData.author || currentReelData.username || 'Unknown User';
-    elements.reelDuration.textContent = currentReelData.duration ? `${currentReelData.duration} seconds` : '-- seconds';
-    elements.reelViews.textContent = currentReelData.views ? `${formatNumber(currentReelData.views)} views` : '-- views';
-    elements.reelDate.textContent = currentReelData.date || new Date().toLocaleDateString();
+    elements.reelTitle.textContent = currentReelData.title;
+    elements.reelAuthor.textContent = currentReelData.author;
+    elements.reelDuration.textContent = `${currentReelData.duration}`;
+    elements.reelViews.textContent = currentReelData.size ? `Size: ${currentReelData.size}` : '--';
+    elements.reelDate.textContent = `Quality: ${currentReelData.quality}`;
 
     // Create quality options
     createQualityOptions();
@@ -166,10 +182,12 @@ function createQualityOptions() {
     
     currentReelData.qualities.forEach((quality, index) => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = `quality-btn ${index === 0 ? 'active' : ''}`;
         btn.innerHTML = `
             <i class="fas fa-video mr-2"></i>
             ${quality.quality?.toUpperCase() || `Quality ${index + 1}`}
+            ${quality.size ? `<br><span class="text-xs opacity-75">${quality.size}</span>` : ''}
         `;
         
         btn.addEventListener('click', () => {
@@ -187,24 +205,35 @@ function createQualityOptions() {
 
 // Download Handlers
 function handleDownloadHd() {
-    if (!selectedQuality) return;
+    if (!currentReelData) return;
     
     const quality = selectedQuality || currentReelData.qualities[0];
-    downloadFile(quality.url, 'instagram_reel_hd', 'mp4');
-    showToast('HD download started!');
+    const filename = `instagram_reel_${Date.now()}`;
+    downloadFile(quality.url, filename, quality.extension || 'mp4');
+    showToast('Download started!');
+    
+    // Track download
+    trackDownload('video');
 }
 
 function handleDownloadAudio() {
-    if (!selectedQuality) return;
+    if (!currentReelData) return;
     
     const quality = selectedQuality || currentReelData.qualities[0];
-    // In a real implementation, you'd convert to MP3
-    downloadFile(quality.url, 'instagram_audio', 'mp3');
+    const filename = `instagram_audio_${Date.now()}`;
+    
+    // For audio download, we use the same URL but suggest .mp3 extension
+    // Note: This will download the video as MP3 filename, but content remains video
+    // In a real implementation, you'd need server-side audio extraction
+    downloadFile(quality.url, filename, 'mp3');
     showToast('Audio download started!');
+    
+    // Track download
+    trackDownload('audio');
 }
 
 function handleCopyLink() {
-    if (!selectedQuality) return;
+    if (!currentReelData) return;
     
     const quality = selectedQuality || currentReelData.qualities[0];
     navigator.clipboard.writeText(quality.url).then(() => {
@@ -217,8 +246,11 @@ function handleCopyLink() {
 function handleShare() {
     if (navigator.share) {
         navigator.share({
-            title: 'Check out this Instagram Reel',
+            title: 'Instagram Reel',
+            text: 'Check out this Instagram Reel',
             url: window.location.href
+        }).catch(() => {
+            handleCopyLink();
         });
     } else {
         handleCopyLink();
@@ -248,6 +280,7 @@ function sanitizeFilename(filename) {
 }
 
 function formatNumber(num) {
+    if (!num) return '--';
     if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M';
     }
@@ -261,7 +294,6 @@ function formatNumber(num) {
 function showLoader() {
     elements.loader.classList.remove('hidden');
     elements.downloadBtn.disabled = true;
-    elements.downloadBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Processing...';
 }
 
 function hideLoader() {
@@ -273,7 +305,12 @@ function hideLoader() {
 function showError(message) {
     elements.errorText.textContent = message;
     elements.error.classList.remove('hidden');
-    elements.error.classList.add('animate-shake');
+    
+    // Add shake animation
+    elements.error.style.animation = 'none';
+    setTimeout(() => {
+        elements.error.style.animation = 'shake 0.5s ease-in-out';
+    }, 10);
 }
 
 function hideError() {
@@ -282,7 +319,12 @@ function hideError() {
 
 function showResults() {
     elements.results.classList.remove('hidden');
-    elements.results.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        elements.results.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }, 300);
 }
 
 function hideResults() {
@@ -300,24 +342,36 @@ function showToast(message) {
 
 // Cache Management
 function saveToCache(data, url) {
-    const cache = {
-        data: data,
-        url: url,
-        timestamp: Date.now()
-    };
-    localStorage.setItem('instaSave_cache', JSON.stringify(cache));
+    try {
+        const cache = {
+            data: data,
+            url: url,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('instaSave_cache', JSON.stringify(cache));
+    } catch (e) {
+        console.warn('Could not save to cache');
+    }
 }
 
 function loadFromCache() {
     try {
         const cache = JSON.parse(localStorage.getItem('instaSave_cache'));
-        if (cache && (Date.now() - cache.timestamp) < 30 * 60 * 1000) { // 30 minutes
+        if (cache && (Date.now() - cache.timestamp) < 30 * 60 * 1000) {
             elements.urlInput.value = cache.url;
             showToast('Previous session restored');
         }
     } catch (e) {
         // Cache is invalid
     }
+}
+
+// Download Tracking (analytics)
+function trackDownload(type) {
+    // In a real app, you'd send this to analytics
+    console.log(`Download tracked: ${type}`);
+    const downloads = parseInt(localStorage.getItem('download_count') || '0');
+    localStorage.setItem('download_count', (downloads + 1).toString());
 }
 
 // Add some interactive effects
@@ -335,13 +389,25 @@ document.addEventListener('mousemove', function(e) {
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'v') {
-        e.preventDefault();
-        handlePaste();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        // Allow default paste behavior in input field
+        return;
     }
     
     if (e.key === 'Escape') {
         hideError();
-        hideResults();
     }
 });
+
+// Add error boundary for unhandled errors
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+    showError('An unexpected error occurred. Please refresh the page.');
+});
+
+// Service Worker for offline functionality (optional)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(console.error);
+    });
+}
