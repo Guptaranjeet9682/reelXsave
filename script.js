@@ -1,358 +1,244 @@
-// API Configuration - DIRECT API CALL (No proxy needed)
-const API_BASE = 'https://instadownload.ytansh038.workers.dev/';
-
-// DOM Elements
-const elements = {
-    form: document.getElementById('downloadForm'),
-    urlInput: document.getElementById('urlInput'),
-    pasteBtn: document.getElementById('pasteBtn'),
-    downloadBtn: document.getElementById('downloadBtn'),
-    loader: document.getElementById('loader'),
-    error: document.getElementById('error'),
-    errorText: document.getElementById('errorText'),
-    retryBtn: document.getElementById('retryBtn'),
-    results: document.getElementById('results'),
-    reelThumbnail: document.getElementById('reelThumbnail'),
-    reelTitle: document.getElementById('reelTitle'),
-    reelAuthor: document.getElementById('reelAuthor'),
-    reelDuration: document.getElementById('reelDuration'),
-    reelSize: document.getElementById('reelSize'),
-    reelQuality: document.getElementById('reelQuality'),
-    qualityOptions: document.getElementById('qualityOptions'),
-    downloadHd: document.getElementById('downloadHd'),
-    downloadAudio: document.getElementById('downloadAudio'),
-    copyLink: document.getElementById('copyLink'),
-    shareBtn: document.getElementById('shareBtn'),
-    toast: document.getElementById('toast'),
-    toastMessage: document.getElementById('toastMessage')
-};
-
-// Global State
-let currentReelData = null;
-
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
-});
-
-function initializeApp() {
-    // Event Listeners
-    elements.form.addEventListener('submit', handleFormSubmit);
-    elements.pasteBtn.addEventListener('click', handlePaste);
-    elements.retryBtn.addEventListener('click', handleRetry);
-    elements.downloadHd.addEventListener('click', handleDownloadHd);
-    elements.downloadAudio.addEventListener('click', handleDownloadAudio);
-    elements.copyLink.addEventListener('click', handleCopyLink);
-    elements.shareBtn.addEventListener('click', handleShare);
-    
-    console.log('App initialized successfully');
-}
-
-// Form Submission
-async function handleFormSubmit(e) {
-    e.preventDefault();
-    
-    const url = elements.urlInput.value.trim();
-    
-    if (!isValidInstagramUrl(url)) {
-        showError('Please enter a valid Instagram Reel URL');
-        return;
+// Simple and Fixed Version
+class InstaDownloader {
+    constructor() {
+        this.API_URL = 'https://instadownload.ytansh038.workers.dev/?url=';
+        this.currentData = null;
+        this.init();
     }
 
-    await fetchReelData(url);
-}
+    init() {
+        // Get DOM elements
+        this.elements = {
+            form: document.getElementById('downloadForm'),
+            urlInput: document.getElementById('urlInput'),
+            pasteBtn: document.getElementById('pasteBtn'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            loader: document.getElementById('loader'),
+            error: document.getElementById('error'),
+            errorText: document.getElementById('errorText'),
+            retryBtn: document.getElementById('retryBtn'),
+            results: document.getElementById('results'),
+            reelTitle: document.getElementById('reelTitle'),
+            reelDuration: document.getElementById('reelDuration'),
+            reelSize: document.getElementById('reelSize'),
+            downloadVideo: document.getElementById('downloadVideo'),
+            downloadAudio: document.getElementById('downloadAudio'),
+            copyLink: document.getElementById('copyLink')
+        };
 
-// Paste from Clipboard
-async function handlePaste() {
-    try {
-        const text = await navigator.clipboard.readText();
-        if (isValidInstagramUrl(text)) {
-            elements.urlInput.value = text;
-            showToast('URL pasted successfully!');
-        } else {
-            showError('Clipboard does not contain a valid Instagram URL');
-        }
-    } catch (err) {
-        showError('Cannot access clipboard. Please paste manually.');
-    }
-}
-
-// Validate Instagram URL
-function isValidInstagramUrl(url) {
-    const instagramRegex = /https?:\/\/(www\.)?instagram\.com\/(reel|p|stories)\/([^\/?#&]+).*/;
-    return instagramRegex.test(url);
-}
-
-// Fetch Reel Data - COMPLETELY FIXED FOR YOUR API
-async function fetchReelData(url) {
-    showLoader();
-    hideError();
-    hideResults();
-
-    try {
-        // Show loading state
-        elements.downloadBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Fetching...';
-        elements.downloadBtn.disabled = true;
-
-        console.log('Fetching from URL:', API_BASE + '?url=' + encodeURIComponent(url));
-        
-        const response = await fetch(API_BASE + '?url=' + encodeURIComponent(url));
-        
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('API Response:', data);
-
-        // Check if API returned error
-        if (data.error) {
-            throw new Error(data.error || 'API returned an error');
-        }
-
-        // Check if we have valid result data (YOUR API STRUCTURE)
-        if (!data.result || !data.result.url) {
-            throw new Error('No video URL found in the response');
-        }
-
-        processReelData(data);
-        
-    } catch (err) {
-        console.error('Fetch error:', err);
-        showError(err.message || 'Failed to download reel. Please check the URL and try again.');
-    } finally {
-        hideLoader();
-    }
-}
-
-// Process and Display Results - UPDATED FOR YOUR API STRUCTURE
-function processReelData(data) {
-    const result = data.result;
-    
-    if (!result || !result.url) {
-        showError('No video found in this reel');
-        return;
+        this.bindEvents();
+        console.log('InstaDownloader initialized');
     }
 
-    currentReelData = {
-        title: 'Instagram Reel',
-        author: 'Instagram User',
-        duration: result.duration || '--',
-        quality: result.quality || 'HD',
-        size: result.formattedSize || formatBytes(result.size) || '--',
-        downloadUrl: result.url,
-        extension: result.extension || 'mp4',
-        qualities: [{
+    bindEvents() {
+        this.elements.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.elements.pasteBtn.addEventListener('click', () => this.handlePaste());
+        this.elements.retryBtn.addEventListener('click', () => this.handleRetry());
+        this.elements.downloadVideo.addEventListener('click', () => this.downloadVideo());
+        this.elements.downloadAudio.addEventListener('click', () => this.downloadAudio());
+        this.elements.copyLink.addEventListener('click', () => this.copyLink());
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        const url = this.elements.urlInput.value.trim();
+        
+        if (!this.isValidUrl(url)) {
+            this.showError('Please enter a valid Instagram Reel URL');
+            return;
+        }
+
+        await this.fetchReelData(url);
+    }
+
+    async handlePaste() {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (this.isValidUrl(text)) {
+                this.elements.urlInput.value = text;
+                this.showMessage('URL pasted successfully!');
+            } else {
+                this.showError('Clipboard does not contain a valid Instagram URL');
+            }
+        } catch (err) {
+            this.showError('Cannot access clipboard. Please paste manually.');
+        }
+    }
+
+    isValidUrl(url) {
+        // Simple Instagram URL validation
+        return url.includes('instagram.com/reel/') || url.includes('instagram.com/p/');
+    }
+
+    async fetchReelData(url) {
+        this.showLoading();
+        this.hideError();
+        this.hideResults();
+
+        try {
+            console.log('Fetching from:', this.API_URL + encodeURIComponent(url));
+            
+            const response = await fetch(this.API_URL + encodeURIComponent(url), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('API Response:', data);
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            if (!data.result || !data.result.url) {
+                throw new Error('No video found in the response');
+            }
+
+            this.processData(data);
+            
+        } catch (error) {
+            console.error('Fetch error:', error);
+            this.showError(this.getErrorMessage(error));
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    processData(data) {
+        const result = data.result;
+        
+        this.currentData = {
             url: result.url,
-            quality: result.quality || 'hd',
-            size: result.formattedSize || formatBytes(result.size),
+            duration: result.duration || 'Unknown',
+            size: result.formattedSize || this.formatBytes(result.size) || 'Unknown',
+            quality: result.quality || 'HD',
             extension: result.extension || 'mp4'
-        }]
-    };
+        };
 
-    displayResults();
-}
+        this.displayResults();
+    }
 
-// Display Results
-function displayResults() {
-    if (!currentReelData) return;
-
-    // Set default thumbnail
-    elements.reelThumbnail.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%231e293b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="%239ca3af">Instagram Reel Preview</text></svg>';
-    elements.reelThumbnail.classList.remove('hidden');
-
-    // Set content information
-    elements.reelTitle.textContent = currentReelData.title;
-    elements.reelAuthor.textContent = currentReelData.author;
-    elements.reelDuration.textContent = `${currentReelData.duration}`;
-    elements.reelSize.textContent = `Size: ${currentReelData.size}`;
-    elements.reelQuality.textContent = `Quality: ${currentReelData.quality}`;
-
-    // Create quality options
-    createQualityOptions();
-    
-    showResults();
-    showToast('Reel loaded successfully!');
-}
-
-// Create Quality Selection Buttons
-function createQualityOptions() {
-    elements.qualityOptions.innerHTML = '';
-    
-    currentReelData.qualities.forEach((quality, index) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `quality-btn ${index === 0 ? 'active' : ''}`;
-        btn.innerHTML = `
-            <i class="fas fa-video mr-2"></i>
-            ${quality.quality?.toUpperCase() || 'HD'}
-            ${quality.size ? `<br><span class="text-xs opacity-75">${quality.size}</span>` : ''}
-        `;
+    displayResults() {
+        this.elements.reelTitle.textContent = 'Instagram Reel';
+        this.elements.reelDuration.textContent = `Duration: ${this.currentData.duration}`;
+        this.elements.reelSize.textContent = `Size: ${this.currentData.size}`;
         
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
+        this.showResults();
+        this.showMessage('Reel loaded successfully!');
+    }
+
+    downloadVideo() {
+        if (!this.currentData) return;
         
-        elements.qualityOptions.appendChild(btn);
-    });
-}
+        this.downloadFile(this.currentData.url, 'instagram_reel', this.currentData.extension);
+        this.showMessage('Video download started!');
+    }
 
-// Download Handlers
-function handleDownloadHd() {
-    if (!currentReelData) return;
-    
-    const quality = currentReelData.qualities[0];
-    const filename = `instagram_reel_${Date.now()}`;
-    downloadFile(quality.url, filename, quality.extension);
-    showToast('Download started!');
-    
-    // Track download
-    trackDownload('video');
-}
+    downloadAudio() {
+        if (!this.currentData) return;
+        
+        // For audio, we'll use the same URL but change extension to mp3
+        this.downloadFile(this.currentData.url, 'instagram_audio', 'mp3');
+        this.showMessage('Audio download started!');
+    }
 
-function handleDownloadAudio() {
-    if (!currentReelData) return;
-    
-    const quality = currentReelData.qualities[0];
-    const filename = `instagram_audio_${Date.now()}`;
-    
-    // For audio download, we use the same URL but suggest .mp3 extension
-    downloadFile(quality.url, filename, 'mp3');
-    showToast('Audio download started!');
-    
-    // Track download
-    trackDownload('audio');
-}
-
-function handleCopyLink() {
-    if (!currentReelData) return;
-    
-    const quality = currentReelData.qualities[0];
-    navigator.clipboard.writeText(quality.url).then(() => {
-        showToast('Link copied to clipboard!');
-    }).catch(() => {
-        showError('Failed to copy link');
-    });
-}
-
-function handleShare() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Instagram Reel',
-            text: 'Check out this Instagram Reel',
-            url: window.location.href
+    copyLink() {
+        if (!this.currentData) return;
+        
+        navigator.clipboard.writeText(this.currentData.url).then(() => {
+            this.showMessage('Link copied to clipboard!');
         }).catch(() => {
-            handleCopyLink();
+            this.showError('Failed to copy link');
         });
-    } else {
-        handleCopyLink();
+    }
+
+    downloadFile(url, filename, extension) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${filename}_${Date.now()}.${extension}`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    handleRetry() {
+        const url = this.elements.urlInput.value.trim();
+        if (url) {
+            this.fetchReelData(url);
+        }
+    }
+
+    // UI Helper Methods
+    showLoading() {
+        this.elements.loader.classList.remove('hidden');
+        this.elements.downloadBtn.disabled = true;
+        this.elements.downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+    }
+
+    hideLoading() {
+        this.elements.loader.classList.add('hidden');
+        this.elements.downloadBtn.disabled = false;
+        this.elements.downloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Download Reel';
+    }
+
+    showError(message) {
+        this.elements.errorText.textContent = message;
+        this.elements.error.classList.remove('hidden');
+    }
+
+    hideError() {
+        this.elements.error.classList.add('hidden');
+    }
+
+    showResults() {
+        this.elements.results.classList.remove('hidden');
+    }
+
+    hideResults() {
+        this.elements.results.classList.add('hidden');
+    }
+
+    showMessage(message) {
+        // Simple message display (you can enhance this with toast)
+        console.log('Message:', message);
+        alert(message); // Simple alert for now
+    }
+
+    getErrorMessage(error) {
+        if (error.message.includes('Failed to fetch')) {
+            return 'Network error: Please check your internet connection';
+        } else if (error.message.includes('CORS')) {
+            return 'CORS error: Please try again or use a different browser';
+        } else {
+            return error.message || 'Failed to download reel. Please try again.';
+        }
+    }
+
+    formatBytes(bytes) {
+        if (!bytes) return null;
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 }
 
-function handleRetry() {
-    const url = elements.urlInput.value.trim();
-    if (url) {
-        fetchReelData(url);
-    }
-}
-
-// Utility Functions
-function downloadFile(url, filename, extension) {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${sanitizeFilename(filename)}.${extension}`;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function sanitizeFilename(filename) {
-    return filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-}
-
-function formatBytes(bytes) {
-    if (!bytes) return '--';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-// UI Control Functions
-function showLoader() {
-    elements.loader.classList.remove('hidden');
-    elements.downloadBtn.disabled = true;
-}
-
-function hideLoader() {
-    elements.loader.classList.add('hidden');
-    elements.downloadBtn.disabled = false;
-    elements.downloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Download Now';
-}
-
-function showError(message) {
-    elements.errorText.textContent = message;
-    elements.error.classList.remove('hidden');
-    
-    // Add shake animation
-    elements.error.style.animation = 'none';
-    setTimeout(() => {
-        elements.error.style.animation = 'shake 0.5s ease-in-out';
-    }, 10);
-}
-
-function hideError() {
-    elements.error.classList.add('hidden');
-}
-
-function showResults() {
-    elements.results.classList.remove('hidden');
-    setTimeout(() => {
-        elements.results.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
-    }, 300);
-}
-
-function hideResults() {
-    elements.results.classList.add('hidden');
-}
-
-function showToast(message) {
-    elements.toastMessage.textContent = message;
-    elements.toast.classList.remove('translate-x-full');
-    
-    setTimeout(() => {
-        elements.toast.classList.add('translate-x-full');
-    }, 3000);
-}
-
-// Download Tracking
-function trackDownload(type) {
-    console.log(`Download tracked: ${type}`);
-    const downloads = parseInt(localStorage.getItem('download_count') || '0');
-    localStorage.setItem('download_count', (downloads + 1).toString());
-}
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        hideError();
-    }
+// Initialize the app when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new InstaDownloader();
 });
 
-// Error boundary for unhandled errors
-window.addEventListener('error', function(e) {
-    console.error('Global error:', e.error);
-});
-
-// Test function to debug API
-window.debugAPI = function(url) {
-    console.log('Testing API with URL:', url);
-    fetchReelData(url);
+// Global function for testing
+window.testDownloader = function(url) {
+    const downloader = new InstaDownloader();
+    downloader.fetchReelData(url);
 };
