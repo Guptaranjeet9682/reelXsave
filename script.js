@@ -1,5 +1,5 @@
-// API Configuration
-const API_URL = 'https://instadownload.ytansh038.workers.dev/?url=';
+// API Configuration - DIRECT API CALL (No proxy needed)
+const API_BASE = 'https://instadownload.ytansh038.workers.dev/';
 
 // DOM Elements
 const elements = {
@@ -16,8 +16,8 @@ const elements = {
     reelTitle: document.getElementById('reelTitle'),
     reelAuthor: document.getElementById('reelAuthor'),
     reelDuration: document.getElementById('reelDuration'),
-    reelViews: document.getElementById('reelViews'),
-    reelDate: document.getElementById('reelDate'),
+    reelSize: document.getElementById('reelSize'),
+    reelQuality: document.getElementById('reelQuality'),
     qualityOptions: document.getElementById('qualityOptions'),
     downloadHd: document.getElementById('downloadHd'),
     downloadAudio: document.getElementById('downloadAudio'),
@@ -29,7 +29,6 @@ const elements = {
 
 // Global State
 let currentReelData = null;
-let selectedQuality = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -46,8 +45,7 @@ function initializeApp() {
     elements.copyLink.addEventListener('click', handleCopyLink);
     elements.shareBtn.addEventListener('click', handleShare);
     
-    // Load from cache if available
-    loadFromCache();
+    console.log('App initialized successfully');
 }
 
 // Form Submission
@@ -85,38 +83,41 @@ function isValidInstagramUrl(url) {
     return instagramRegex.test(url);
 }
 
-// Fetch Reel Data - UPDATED FOR YOUR API
+// Fetch Reel Data - COMPLETELY FIXED FOR YOUR API
 async function fetchReelData(url) {
     showLoader();
     hideError();
     hideResults();
 
     try {
-        // Add loading animation
+        // Show loading state
         elements.downloadBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Fetching...';
+        elements.downloadBtn.disabled = true;
+
+        console.log('Fetching from URL:', API_BASE + '?url=' + encodeURIComponent(url));
         
-        const response = await fetch(API_URL + encodeURIComponent(url));
+        const response = await fetch(API_BASE + '?url=' + encodeURIComponent(url));
+        
+        console.log('Response status:', response.status);
         
         if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`);
         }
         
         const data = await response.json();
-
-        console.log('API Response:', data); // For debugging
+        console.log('API Response:', data);
 
         // Check if API returned error
         if (data.error) {
             throw new Error(data.error || 'API returned an error');
         }
 
-        // Check if we have valid result data
+        // Check if we have valid result data (YOUR API STRUCTURE)
         if (!data.result || !data.result.url) {
             throw new Error('No video URL found in the response');
         }
 
         processReelData(data);
-        saveToCache(data, url);
         
     } catch (err) {
         console.error('Fetch error:', err);
@@ -126,7 +127,7 @@ async function fetchReelData(url) {
     }
 }
 
-// Process and Display Results - UPDATED FOR YOUR API
+// Process and Display Results - UPDATED FOR YOUR API STRUCTURE
 function processReelData(data) {
     const result = data.result;
     
@@ -140,14 +141,14 @@ function processReelData(data) {
         author: 'Instagram User',
         duration: result.duration || '--',
         quality: result.quality || 'HD',
-        size: result.formattedSize || result.size || '--',
+        size: result.formattedSize || formatBytes(result.size) || '--',
         downloadUrl: result.url,
         extension: result.extension || 'mp4',
         qualities: [{
             url: result.url,
             quality: result.quality || 'hd',
-            size: result.formattedSize,
-            extension: result.extension
+            size: result.formattedSize || formatBytes(result.size),
+            extension: result.extension || 'mp4'
         }]
     };
 
@@ -158,16 +159,16 @@ function processReelData(data) {
 function displayResults() {
     if (!currentReelData) return;
 
-    // Set default thumbnail since API doesn't provide one
-    elements.reelThumbnail.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%231e293b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="%239ca3af">Instagram Reel</text></svg>';
+    // Set default thumbnail
+    elements.reelThumbnail.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%231e293b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="%239ca3af">Instagram Reel Preview</text></svg>';
     elements.reelThumbnail.classList.remove('hidden');
 
     // Set content information
     elements.reelTitle.textContent = currentReelData.title;
     elements.reelAuthor.textContent = currentReelData.author;
     elements.reelDuration.textContent = `${currentReelData.duration}`;
-    elements.reelViews.textContent = currentReelData.size ? `Size: ${currentReelData.size}` : '--';
-    elements.reelDate.textContent = `Quality: ${currentReelData.quality}`;
+    elements.reelSize.textContent = `Size: ${currentReelData.size}`;
+    elements.reelQuality.textContent = `Quality: ${currentReelData.quality}`;
 
     // Create quality options
     createQualityOptions();
@@ -186,30 +187,26 @@ function createQualityOptions() {
         btn.className = `quality-btn ${index === 0 ? 'active' : ''}`;
         btn.innerHTML = `
             <i class="fas fa-video mr-2"></i>
-            ${quality.quality?.toUpperCase() || `Quality ${index + 1}`}
+            ${quality.quality?.toUpperCase() || 'HD'}
             ${quality.size ? `<br><span class="text-xs opacity-75">${quality.size}</span>` : ''}
         `;
         
         btn.addEventListener('click', () => {
             document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            selectedQuality = quality;
         });
         
         elements.qualityOptions.appendChild(btn);
     });
-    
-    // Set first quality as default
-    selectedQuality = currentReelData.qualities[0];
 }
 
 // Download Handlers
 function handleDownloadHd() {
     if (!currentReelData) return;
     
-    const quality = selectedQuality || currentReelData.qualities[0];
+    const quality = currentReelData.qualities[0];
     const filename = `instagram_reel_${Date.now()}`;
-    downloadFile(quality.url, filename, quality.extension || 'mp4');
+    downloadFile(quality.url, filename, quality.extension);
     showToast('Download started!');
     
     // Track download
@@ -219,12 +216,10 @@ function handleDownloadHd() {
 function handleDownloadAudio() {
     if (!currentReelData) return;
     
-    const quality = selectedQuality || currentReelData.qualities[0];
+    const quality = currentReelData.qualities[0];
     const filename = `instagram_audio_${Date.now()}`;
     
     // For audio download, we use the same URL but suggest .mp3 extension
-    // Note: This will download the video as MP3 filename, but content remains video
-    // In a real implementation, you'd need server-side audio extraction
     downloadFile(quality.url, filename, 'mp3');
     showToast('Audio download started!');
     
@@ -235,7 +230,7 @@ function handleDownloadAudio() {
 function handleCopyLink() {
     if (!currentReelData) return;
     
-    const quality = selectedQuality || currentReelData.qualities[0];
+    const quality = currentReelData.qualities[0];
     navigator.clipboard.writeText(quality.url).then(() => {
         showToast('Link copied to clipboard!');
     }).catch(() => {
@@ -279,15 +274,12 @@ function sanitizeFilename(filename) {
     return filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 }
 
-function formatNumber(num) {
-    if (!num) return '--';
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    }
-    if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
-    return num;
+function formatBytes(bytes) {
+    if (!bytes) return '--';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // UI Control Functions
@@ -340,74 +332,27 @@ function showToast(message) {
     }, 3000);
 }
 
-// Cache Management
-function saveToCache(data, url) {
-    try {
-        const cache = {
-            data: data,
-            url: url,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('instaSave_cache', JSON.stringify(cache));
-    } catch (e) {
-        console.warn('Could not save to cache');
-    }
-}
-
-function loadFromCache() {
-    try {
-        const cache = JSON.parse(localStorage.getItem('instaSave_cache'));
-        if (cache && (Date.now() - cache.timestamp) < 30 * 60 * 1000) {
-            elements.urlInput.value = cache.url;
-            showToast('Previous session restored');
-        }
-    } catch (e) {
-        // Cache is invalid
-    }
-}
-
-// Download Tracking (analytics)
+// Download Tracking
 function trackDownload(type) {
-    // In a real app, you'd send this to analytics
     console.log(`Download tracked: ${type}`);
     const downloads = parseInt(localStorage.getItem('download_count') || '0');
     localStorage.setItem('download_count', (downloads + 1).toString());
 }
 
-// Add some interactive effects
-document.addEventListener('mousemove', function(e) {
-    const cards = document.querySelectorAll('.feature-card, .quality-btn');
-    cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-    });
-});
-
 // Add keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
-        // Allow default paste behavior in input field
-        return;
-    }
-    
     if (e.key === 'Escape') {
         hideError();
     }
 });
 
-// Add error boundary for unhandled errors
+// Error boundary for unhandled errors
 window.addEventListener('error', function(e) {
     console.error('Global error:', e.error);
-    showError('An unexpected error occurred. Please refresh the page.');
 });
 
-// Service Worker for offline functionality (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js').catch(console.error);
-    });
-}
+// Test function to debug API
+window.debugAPI = function(url) {
+    console.log('Testing API with URL:', url);
+    fetchReelData(url);
+};
