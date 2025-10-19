@@ -1,13 +1,12 @@
-// Simple and Fixed Version
 class InstaDownloader {
     constructor() {
-        this.API_URL = 'https://instadownload.ytansh038.workers.dev/?url=';
+        // Use Netlify function instead of direct API
+        this.API_URL = '/.netlify/functions/download?url=';
         this.currentData = null;
         this.init();
     }
 
     init() {
-        // Get DOM elements
         this.elements = {
             form: document.getElementById('downloadForm'),
             urlInput: document.getElementById('urlInput'),
@@ -27,7 +26,7 @@ class InstaDownloader {
         };
 
         this.bindEvents();
-        console.log('InstaDownloader initialized');
+        console.log('InstaDownloader initialized with Netlify function');
     }
 
     bindEvents() {
@@ -66,7 +65,6 @@ class InstaDownloader {
     }
 
     isValidUrl(url) {
-        // Simple Instagram URL validation
         return url.includes('instagram.com/reel/') || url.includes('instagram.com/p/');
     }
 
@@ -76,19 +74,15 @@ class InstaDownloader {
         this.hideResults();
 
         try {
-            console.log('Fetching from:', this.API_URL + encodeURIComponent(url));
+            console.log('Fetching from Netlify function:', this.API_URL + encodeURIComponent(url));
             
-            const response = await fetch(this.API_URL + encodeURIComponent(url), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            });
+            const response = await fetch(this.API_URL + encodeURIComponent(url));
 
             console.log('Response status:', response.status);
 
             if (!response.ok) {
-                throw new Error(`Server returned ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Server returned ${response.status}`);
             }
 
             const data = await response.json();
@@ -145,7 +139,6 @@ class InstaDownloader {
     downloadAudio() {
         if (!this.currentData) return;
         
-        // For audio, we'll use the same URL but change extension to mp3
         this.downloadFile(this.currentData.url, 'instagram_audio', 'mp3');
         this.showMessage('Audio download started!');
     }
@@ -208,16 +201,15 @@ class InstaDownloader {
     }
 
     showMessage(message) {
-        // Simple message display (you can enhance this with toast)
-        console.log('Message:', message);
-        alert(message); // Simple alert for now
+        // Simple alert for now
+        alert(message);
     }
 
     getErrorMessage(error) {
         if (error.message.includes('Failed to fetch')) {
-            return 'Network error: Please check your internet connection';
+            return 'Network error: Please check your internet connection and try again.';
         } else if (error.message.includes('CORS')) {
-            return 'CORS error: Please try again or use a different browser';
+            return 'CORS error: Please try again with the Netlify function.';
         } else {
             return error.message || 'Failed to download reel. Please try again.';
         }
@@ -232,13 +224,7 @@ class InstaDownloader {
     }
 }
 
-// Initialize the app when page loads
+// Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     new InstaDownloader();
 });
-
-// Global function for testing
-window.testDownloader = function(url) {
-    const downloader = new InstaDownloader();
-    downloader.fetchReelData(url);
-};
