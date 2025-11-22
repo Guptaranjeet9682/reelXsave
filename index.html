@@ -5,35 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>Instagram Video Downloader 2024 | Download Reels, Stories, Photos Free</title>
-    <meta name="description" content="🚀 Free Instagram Video Downloader - Download HD Instagram Reels, Stories, Videos & Photos in 2024. No Watermark ⭐ No Registration ⭐ Fast & Secure ⭐ Works on All Devices">
-    <meta name="keywords" content="instagram downloader, instagram video download, download instagram videos, instagram reel download, instagram story download, save instagram videos, ig downloader, instagram to mp4, instagram saver, download instagram photos, instagram video downloader online, free instagram downloader, instagram reels download, save instagram stories, instagram download 2024">
+    <title>Reel X Save - Instagram Video Downloader | Download Reels, Stories, Photos Free 2024</title>
+    <meta name="description" content="🚀 Reel X Save - Free Instagram Video Downloader 2024 ⭐ Download HD Instagram Reels, Stories, Videos & Photos without watermark. No registration ⭐ Fast & Secure ⭐ Works on All Devices">
+    <meta name="keywords" content="instagram downloader, instagram video download, download instagram videos, instagram reel download, instagram story download, save instagram videos, ig downloader, instagram to mp4, instagram saver, download instagram photos, instagram video downloader online, free instagram downloader, instagram reels download, save instagram stories, instagram download 2024, reel x save">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-site.netlify.app/">
-    <meta property="og:title" content="Instagram Video Downloader 2024 | Download Reels, Stories, Photos Free">
+    <meta property="og:url" content="https://reelxsave.netlify.app/">
+    <meta property="og:title" content="Reel X Save - Instagram Video Downloader | Download Reels, Stories, Photos Free 2024">
     <meta property="og:description" content="Free Instagram Downloader - Download HD Instagram videos, reels, stories without watermark. No registration required. Works on all devices.">
-    <meta property="og:image" content="https://your-site.netlify.app/og-image.jpg">
+    <meta property="og:image" content="https://reelxsave.netlify.app/og-image.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://your-site.netlify.app/">
-    <meta property="twitter:title" content="Instagram Video Downloader 2024 | Download Reels, Stories, Photos Free">
+    <meta property="twitter:url" content="https://reelxsave.netlify.app/">
+    <meta property="twitter:title" content="Reel X Save - Instagram Video Downloader | Download Reels, Stories, Photos Free 2024">
     <meta property="twitter:description" content="Free Instagram Downloader - Download HD Instagram videos, reels, stories without watermark. No registration required.">
-    <meta property="twitter:image" content="https://your-site.netlify.app/og-image.jpg">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-site.netlify.app/">
+    <link rel="canonical" href="https://reelxsave.netlify.app/">
     
     <!-- Schema.org markup -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "Instagram Video Downloader",
+        "name": "Reel X Save - Instagram Video Downloader",
         "description": "Free tool to download Instagram videos, reels, stories, IGTV and photos in HD quality without watermark. No registration required.",
-        "url": "https://your-site.netlify.app/",
+        "url": "https://reelxsave.netlify.app/",
         "applicationCategory": "UtilityApplication",
         "operatingSystem": "Any",
         "permissions": "browser",
@@ -44,13 +43,13 @@
         },
         "author": {
             "@type": "Organization",
-            "name": "InstaSave Pro",
-            "url": "https://your-site.netlify.app/"
+            "name": "Reel X Save",
+            "url": "https://reelxsave.netlify.app/"
         },
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "4.8",
-            "ratingCount": "12500"
+            "ratingCount": "15600"
         }
     }
     </script>
@@ -65,7 +64,7 @@
         <div class="flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fas fa-download text-blue-500 text-2xl mr-3"></i>
-                <span class="text-white font-bold text-xl">InstaSave Pro</span>
+                <span class="text-white font-bold text-xl">Reel X Save</span>
             </div>
             <div class="flex space-x-6">
                 <a href="/" class="text-white hover:text-blue-400 transition">Home</a>
@@ -80,10 +79,10 @@
         <!-- Header with H1 -->
         <header class="text-center mb-16">
             <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                Instagram Video Downloader
+                Reel X Save - Instagram Video Downloader
             </h1>
-            <p class="text-xl text-gray-300 mb-4">Download Instagram Reels, Stories, Videos & Photos in HD Quality</p>
-            <p class="text-gray-400 text-lg">Free • Fast • No Watermark • No Registration Required</p>
+            <p class="text-xl text-gray-300 mb-4">Download Instagram Reels, Stories, Videos & Photos in HD Quality - 100% Free</p>
+            <p class="text-gray-400 text-lg">No Watermark • No Registration • Fast Download • Works Worldwide</p>
         </header>
 
         <!-- Download Section -->
@@ -110,127 +109,189 @@
             </div>
         </div>
 
+        <!-- Loader -->
+        <div id="loader" class="hidden max-w-2xl mx-auto mt-8 text-center">
+            <div class="loader mx-auto mb-4"></div>
+            <p class="text-gray-300">Processing your Instagram video...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error" class="hidden max-w-2xl mx-auto mt-8 bg-red-900 border border-red-700 p-6 rounded-2xl">
+            <div class="flex items-center mb-3">
+                <i class="fas fa-exclamation-triangle text-red-400 mr-3"></i>
+                <h3 class="font-bold text-white">Error</h3>
+            </div>
+            <p id="errorText" class="text-red-200 mb-4"></p>
+            <button id="retryBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                Try Again
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="hidden max-w-4xl mx-auto mt-8">
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold text-white mb-4" id="reelTitle">Instagram Video Ready to Download</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-center text-gray-300">
+                            <i class="fas fa-clock text-green-400 mr-2"></i>
+                            <span id="reelDuration">--</span>
+                        </div>
+                        <div class="flex items-center text-gray-300">
+                            <i class="fas fa-weight text-blue-400 mr-2"></i>
+                            <span id="reelSize">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Download Buttons -->
+                    <div class="space-y-3">
+                        <button id="downloadVideo" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition">
+                            <i class="fas fa-video mr-2"></i>
+                            Download Video (MP4)
+                        </button>
+                        <button id="downloadAudio" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-xl transition">
+                            <i class="fas fa-music mr-2"></i>
+                            Download Audio (MP3)
+                        </button>
+                        <button id="copyLink" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition">
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy Download Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- How It Works -->
         <section class="max-w-6xl mx-auto mb-20">
-            <h2 class="text-4xl font-bold text-center text-white mb-12">How to Download Instagram Videos in 2024</h2>
+            <h2 class="text-4xl font-bold text-center text-white mb-12">How to Download Instagram Videos in 2024 - Complete Guide</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="text-center p-6 bg-white/5 rounded-2xl">
                     <div class="text-4xl font-bold text-blue-500 mb-4">1</div>
                     <h3 class="text-xl font-semibold text-white mb-3">Copy Instagram URL</h3>
-                    <p class="text-gray-400">Open Instagram app or website and copy the link of the reel, story, or post you want to download. You can copy from share button.</p>
+                    <p class="text-gray-400">Open Instagram app or website and find the content you want to download. Click the three dots (⋯) and select "Copy Link" to get the Instagram URL.</p>
                 </div>
                 <div class="text-center p-6 bg-white/5 rounded-2xl">
                     <div class="text-4xl font-bold text-purple-500 mb-4">2</div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Paste URL Here</h3>
-                    <p class="text-gray-400">Paste the copied Instagram URL in the input field above. Our system automatically detects the content type and prepares download.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Paste URL in Reel X Save</h3>
+                    <p class="text-gray-400">Paste the copied Instagram URL in the input field above. Our advanced system automatically detects the content type and prepares it for download.</p>
                 </div>
                 <div class="text-center p-6 bg-white/5 rounded-2xl">
                     <div class="text-4xl font-bold text-green-500 mb-4">3</div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Download & Save</h3>
-                    <p class="text-gray-400">Click download button and save your Instagram content in HD quality. No watermark, no registration, completely free.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Download & Save Instantly</h3>
+                    <p class="text-gray-400">Click the download button and save your Instagram content in HD quality. No watermark, no registration required - completely free and fast.</p>
                 </div>
             </div>
         </section>
 
         <!-- Supported Content -->
         <section class="max-w-6xl mx-auto mb-20">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Supported Instagram Content Types</h2>
+            <h2 class="text-3xl font-bold text-center text-white mb-12">All Instagram Content Types Supported</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="text-center p-6 bg-white/5 rounded-xl">
                     <i class="fas fa-film text-blue-400 text-3xl mb-3"></i>
                     <h3 class="text-lg font-semibold text-white mb-2">Instagram Reels</h3>
-                    <p class="text-gray-400 text-sm">Download Instagram reels in MP4 format with original audio and HD quality.</p>
+                    <p class="text-gray-400 text-sm">Download Instagram reels in MP4 format with original audio. HD quality up to 1080p supported.</p>
                 </div>
                 <div class="text-center p-6 bg-white/5 rounded-xl">
                     <i class="fas fa-history text-purple-400 text-3xl mb-3"></i>
                     <h3 class="text-lg font-semibold text-white mb-2">Instagram Stories</h3>
-                    <p class="text-gray-400 text-sm">Save Instagram stories before they disappear. Download both video and photo stories.</p>
+                    <p class="text-gray-400 text-sm">Save Instagram stories before they disappear. Download both video and photo stories easily.</p>
                 </div>
                 <div class="text-center p-6 bg-white/5 rounded-xl">
                     <i class="fas fa-image text-green-400 text-3xl mb-3"></i>
                     <h3 class="text-lg font-semibold text-white mb-2">Instagram Photos</h3>
-                    <p class="text-gray-400 text-sm">Download high-quality Instagram photos in original resolution without compression.</p>
+                    <p class="text-gray-400 text-sm">Download high-quality Instagram photos in original resolution without any compression or quality loss.</p>
                 </div>
                 <div class="text-center p-6 bg-white/5 rounded-xl">
                     <i class="fas fa-video text-red-400 text-3xl mb-3"></i>
                     <h3 class="text-lg font-semibold text-white mb-2">IGTV Videos</h3>
-                    <p class="text-gray-400 text-sm">Download IGTV videos in full length with the best available quality.</p>
+                    <p class="text-gray-400 text-sm">Download IGTV videos in full length with the best available quality. Support for long videos.</p>
                 </div>
             </div>
         </section>
 
         <!-- Features -->
         <section class="max-w-6xl mx-auto mb-20">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Why Choose Our Instagram Downloader?</h2>
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Why Reel X Save is the Best Instagram Downloader</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-bolt text-yellow-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">Lightning Fast Downloads</h3>
-                    <p class="text-gray-400">Our optimized servers ensure fastest download speeds. Download Instagram videos in seconds without waiting.</p>
+                    <p class="text-gray-400">Our optimized servers ensure the fastest download speeds. Download Instagram videos in seconds without any waiting time.</p>
                 </div>
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-hd text-blue-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">HD Quality Videos</h3>
-                    <p class="text-gray-400">Get the highest available quality for all downloads. We preserve original resolution and audio quality.</p>
+                    <p class="text-gray-400">Get the highest available quality for all downloads. We preserve original resolution and audio quality without compression.</p>
                 </div>
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-shield-alt text-green-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">100% Safe & Secure</h3>
-                    <p class="text-gray-400">No login required. We don't store your data or downloaded content. Your privacy is protected.</p>
+                    <p class="text-gray-400">No login or registration required. We don't store your personal data or downloaded content. Your privacy is completely protected.</p>
                 </div>
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-mobile-alt text-purple-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">Mobile Friendly</h3>
-                    <p class="text-gray-400">Works perfectly on all devices - iPhone, Android, Tablet, Desktop. Responsive design for best experience.</p>
+                    <p class="text-gray-400">Works perfectly on all devices - iPhone, Android, Tablet, Desktop. Fully responsive design for the best user experience.</p>
                 </div>
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-ban text-red-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">No Watermark</h3>
-                    <p class="text-gray-400">Download Instagram videos without any watermark or logo. Get clean, original content as posted.</p>
+                    <p class="text-gray-400">Download Instagram videos without any watermark or logo. Get clean, original content exactly as it was posted on Instagram.</p>
                 </div>
                 <div class="p-6 bg-white/5 rounded-2xl">
                     <i class="fas fa-globe text-orange-400 text-2xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-white mb-3">Works Worldwide</h3>
-                    <p class="text-gray-400">Access our Instagram downloader from anywhere in the world. No regional restrictions or blocks.</p>
+                    <p class="text-gray-400">Access Reel X Save from anywhere in the world. No regional restrictions, VPN required, or geographical blocks.</p>
                 </div>
             </div>
         </section>
 
         <!-- Comprehensive FAQ -->
         <section class="max-w-4xl mx-auto mb-20">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Frequently Asked Questions</h2>
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Frequently Asked Questions About Instagram Downloading</h2>
             <div class="space-y-6">
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Is this Instagram downloader completely free to use?</h3>
-                    <p class="text-gray-400">Yes, our Instagram video downloader is 100% free. There are no hidden charges, subscription fees, or premium features. You can download unlimited Instagram videos, reels, stories, and photos without any cost.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Is Reel X Save completely free to use?</h3>
+                    <p class="text-gray-400">Yes, Reel X Save is 100% free forever. There are no hidden charges, subscription fees, or premium features. You can download unlimited Instagram videos, reels, stories, and photos without any cost. We believe in providing free access to everyone.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">What types of Instagram content can I download?</h3>
-                    <p class="text-gray-400">Our downloader supports all types of Instagram content including: Instagram Reels, Instagram Stories (both video and photo), Instagram Posts (videos and photos), IGTV videos, and Instagram highlights. We continuously update our system to support new Instagram features.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">What types of Instagram content can I download with Reel X Save?</h3>
+                    <p class="text-gray-400">Reel X Save supports all types of Instagram content including: Instagram Reels (short videos with music), Instagram Stories (both video and photo stories that disappear after 24 hours), Instagram Posts (regular videos and photos), IGTV videos (long-form videos), and Instagram highlights. Our system is regularly updated to support new Instagram features and formats.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Do I need to install any software or app?</h3>
-                    <p class="text-gray-400">No installation required. Our Instagram downloader works directly in your web browser on any device. Whether you're using iPhone, Android, Windows, or Mac, you can access our tool through any modern web browser without downloading any additional software.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Do I need to install any software or app to use Reel X Save?</h3>
+                    <p class="text-gray-400">No installation required. Reel X Save works directly in your web browser on any device. Whether you're using iPhone, Android, Windows PC, Mac, or Linux, you can access our tool through any modern web browser (Chrome, Firefox, Safari, Edge) without downloading any additional software or apps.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Is it legal to download Instagram content?</h3>
-                    <p class="text-gray-400">Our tool is designed for personal use and educational purposes. We recommend only downloading content that you have permission to use or content that you've created yourself. Please respect copyright laws and Instagram's Terms of Service. We don't encourage copyright infringement.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Is it legal to download Instagram content using Reel X Save?</h3>
+                    <p class="text-gray-400">Reel X Save is designed for personal use and educational purposes. We recommend only downloading content that you have permission to use or content that you've created yourself. Please respect copyright laws and Instagram's Terms of Service. We don't encourage copyright infringement and advise users to only download content for personal, non-commercial use.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
                     <h3 class="text-xl font-semibold text-white mb-3">How do I download Instagram stories before they disappear?</h3>
-                    <p class="text-gray-400">To download Instagram stories: 1) Open the Instagram story you want to save, 2) Click the three dots (⋯) in the bottom right corner, 3) Select "Copy Link", 4) Paste the link in our downloader, 5) Click download. The story will be saved before it disappears after 24 hours.</p>
+                    <p class="text-gray-400">To download Instagram stories: 1) Open the Instagram story you want to save, 2) Click the three dots (⋯) in the bottom right corner, 3) Select "Copy Link" from the menu, 4) Paste the link in Reel X Save downloader, 5) Click download. The story will be saved in high quality before it disappears after 24 hours. This works for both video and photo stories.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Can I download private Instagram accounts?</h3>
-                    <p class="text-gray-400">No, our downloader only works with public Instagram content. For private accounts, you need to be an approved follower to view the content, and we respect Instagram's privacy settings. We only support downloading from public profiles and public posts.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Can I download from private Instagram accounts?</h3>
+                    <p class="text-gray-400">No, Reel X Save only works with public Instagram content. For private accounts, you need to be an approved follower to view the content, and we respect Instagram's privacy settings. We only support downloading from public profiles and public posts to protect user privacy and comply with Instagram's terms.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">What quality are the downloaded videos?</h3>
-                    <p class="text-gray-400">We download videos in the highest available quality. For Instagram reels and videos, you'll get up to 1080p HD quality. The exact quality depends on what Instagram provides for that specific content. We never compress or reduce the quality during download.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">What quality are the downloaded videos from Reel X Save?</h3>
+                    <p class="text-gray-400">We download videos in the highest available quality provided by Instagram. For Instagram reels and videos, you'll get up to 1080p HD quality. The exact quality depends on what Instagram provides for that specific content. We never compress, reduce quality, or alter the original content during the download process.</p>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Do downloaded videos have watermarks?</h3>
-                    <p class="text-gray-400">No, all downloads are completely clean without any watermarks, logos, or branding. You get the original content exactly as it was posted on Instagram. We don't add any identification to the downloaded files.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Do downloaded videos have watermarks or logos?</h3>
+                    <p class="text-gray-400">No, all downloads from Reel X Save are completely clean without any watermarks, logos, or branding. You get the original content exactly as it was posted on Instagram. We don't add any identification, timestamps, or modifications to the downloaded files.</p>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-6">
+                    <h3 class="text-xl font-semibold text-white mb-3">How fast is the download process with Reel X Save?</h3>
+                    <p class="text-gray-400">Reel X Save is optimized for speed. Most downloads complete within 10-30 seconds depending on your internet connection and the video size. Our servers are located globally to ensure fast access from any location. We use advanced caching and optimization techniques to provide the fastest possible download experience.</p>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-6">
+                    <h3 class="text-xl font-semibold text-white mb-3">Is there any limit on how many videos I can download?</h3>
+                    <p class="text-gray-400">No, there are no limits on Reel X Save. You can download as many Instagram videos, reels, stories, and photos as you want. There are no daily quotas, download caps, or restrictions. Our service is completely unlimited and free for all users.</p>
                 </div>
             </div>
         </section>
@@ -240,14 +301,14 @@
             <h2 class="text-3xl font-bold text-center text-white mb-12">Latest Instagram Tips & Guides</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">How to Download Instagram Reels in 2024</h3>
-                    <p class="text-gray-400 mb-4">Complete guide on downloading Instagram reels on all devices. Step-by-step instructions for iPhone, Android, and desktop.</p>
-                    <a href="/blog.html#reels-guide" class="text-blue-400 hover:text-blue-300">Read More →</a>
+                    <h3 class="text-xl font-semibold text-white mb-3">How to Download Instagram Reels in 2024 - Complete Tutorial</h3>
+                    <p class="text-gray-400 mb-4">Complete step-by-step guide on downloading Instagram reels on all devices. Detailed instructions for iPhone, Android, and desktop computers with screenshots.</p>
+                    <a href="/blog.html#reels-guide" class="text-blue-400 hover:text-blue-300">Read Complete Guide →</a>
                 </div>
                 <div class="bg-white/5 rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold text-white mb-3">Instagram Downloader Legal Guide</h3>
-                    <p class="text-gray-400 mb-4">Understanding copyright laws and fair use when downloading Instagram content. Stay compliant while using our tool.</p>
-                    <a href="/blog.html#legal-guide" class="text-blue-400 hover:text-blue-300">Read More →</a>
+                    <h3 class="text-xl font-semibold text-white mb-3">Instagram Downloader Legal Guide - What You Need to Know</h3>
+                    <p class="text-gray-400 mb-4">Understanding copyright laws and fair use when downloading Instagram content. Complete legal guide to stay compliant while using download tools.</p>
+                    <a href="/blog.html#legal-guide" class="text-blue-400 hover:text-blue-300">Read Legal Guide →</a>
                 </div>
             </div>
         </section>
@@ -256,8 +317,8 @@
         <footer class="max-w-6xl mx-auto pt-8 border-t border-white/10">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <h3 class="text-white font-semibold mb-4">InstaSave Pro</h3>
-                    <p class="text-gray-400 text-sm">Free Instagram Video Downloader. Download reels, stories, videos and photos in HD quality without watermark.</p>
+                    <h3 class="text-white font-semibold mb-4">Reel X Save</h3>
+                    <p class="text-gray-400 text-sm">Free Instagram Video Downloader. Download reels, stories, videos and photos in HD quality without watermark. Fast, secure, and completely free.</p>
                 </div>
                 <div>
                     <h3 class="text-white font-semibold mb-4">Quick Links</h3>
@@ -278,15 +339,15 @@
                 </div>
                 <div>
                     <h3 class="text-white font-semibold mb-4">Legal</h3>
-                    <p class="text-gray-400 text-sm">This tool is for educational purposes only. Respect Instagram's Terms of Service and only download content you have permission to use.</p>
+                    <p class="text-gray-400 text-sm">Reel X Save is for educational purposes only. Respect Instagram's Terms of Service and only download content you have permission to use.</p>
                 </div>
             </div>
             <div class="text-center text-gray-500 text-sm pt-8 border-t border-white/10">
-                <p>© 2024 InstaSave Pro. Not affiliated with Instagram or Meta.</p>
+                <p>© 2024 Reel X Save. Not affiliated with Instagram or Meta. Use responsibly and respect content creators.</p>
             </div>
         </footer>
     </div>
 
     <script src="script.js"></script>
 </body>
-                                                                                                                                                                                                                                                                                                            </html>
+</html>
