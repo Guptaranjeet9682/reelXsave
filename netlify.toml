@@ -3,6 +3,23 @@
   functions = "functions"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt" 
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*.xml"
+  [headers.values]
+    "Content-Type" = "application/xml"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    "Content-Type" = "application/xml"
