@@ -1,6 +1,6 @@
-class InstaDownloader {
+// Fixed Download Functionality for Reel X Save
+class ReelXSave {
     constructor() {
-        // Use Netlify function instead of direct API
         this.API_URL = '/.netlify/functions/download?url=';
         this.currentData = null;
         this.init();
@@ -10,7 +10,6 @@ class InstaDownloader {
         this.elements = {
             form: document.getElementById('downloadForm'),
             urlInput: document.getElementById('urlInput'),
-            pasteBtn: document.getElementById('pasteBtn'),
             downloadBtn: document.getElementById('downloadBtn'),
             loader: document.getElementById('loader'),
             error: document.getElementById('error'),
@@ -26,12 +25,11 @@ class InstaDownloader {
         };
 
         this.bindEvents();
-        console.log('InstaDownloader initialized with Netlify function');
+        console.log('Reel X Save initialized');
     }
 
     bindEvents() {
         this.elements.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        this.elements.pasteBtn.addEventListener('click', () => this.handlePaste());
         this.elements.retryBtn.addEventListener('click', () => this.handleRetry());
         this.elements.downloadVideo.addEventListener('click', () => this.downloadVideo());
         this.elements.downloadAudio.addEventListener('click', () => this.downloadAudio());
@@ -43,29 +41,16 @@ class InstaDownloader {
         const url = this.elements.urlInput.value.trim();
         
         if (!this.isValidUrl(url)) {
-            this.showError('Please enter a valid Instagram Reel URL');
+            this.showError('Please enter a valid Instagram URL');
             return;
         }
 
         await this.fetchReelData(url);
     }
 
-    async handlePaste() {
-        try {
-            const text = await navigator.clipboard.readText();
-            if (this.isValidUrl(text)) {
-                this.elements.urlInput.value = text;
-                this.showMessage('URL pasted successfully!');
-            } else {
-                this.showError('Clipboard does not contain a valid Instagram URL');
-            }
-        } catch (err) {
-            this.showError('Cannot access clipboard. Please paste manually.');
-        }
-    }
-
     isValidUrl(url) {
-        return url.includes('instagram.com/reel/') || url.includes('instagram.com/p/');
+        const instagramRegex = /https?:\/\/(www\.)?instagram\.com\/(reel|p|stories)\/([^\/?#&]+).*/;
+        return instagramRegex.test(url);
     }
 
     async fetchReelData(url) {
@@ -74,15 +59,14 @@ class InstaDownloader {
         this.hideResults();
 
         try {
-            console.log('Fetching from Netlify function:', this.API_URL + encodeURIComponent(url));
+            console.log('Fetching from:', this.API_URL + encodeURIComponent(url));
             
             const response = await fetch(this.API_URL + encodeURIComponent(url));
-
+            
             console.log('Response status:', response.status);
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Server returned ${response.status}`);
+                throw new Error(`Server error: ${response.status}`);
             }
 
             const data = await response.json();
@@ -93,7 +77,7 @@ class InstaDownloader {
             }
 
             if (!data.result || !data.result.url) {
-                throw new Error('No video found in the response');
+                throw new Error('No video URL found in response');
             }
 
             this.processData(data);
@@ -121,25 +105,25 @@ class InstaDownloader {
     }
 
     displayResults() {
-        this.elements.reelTitle.textContent = 'Instagram Reel';
+        this.elements.reelTitle.textContent = 'Instagram Video Ready to Download';
         this.elements.reelDuration.textContent = `Duration: ${this.currentData.duration}`;
         this.elements.reelSize.textContent = `Size: ${this.currentData.size}`;
         
         this.showResults();
-        this.showMessage('Reel loaded successfully!');
+        this.showMessage('Video loaded successfully! Ready to download.');
     }
 
     downloadVideo() {
         if (!this.currentData) return;
         
-        this.downloadFile(this.currentData.url, 'instagram_reel', this.currentData.extension);
+        this.downloadFile(this.currentData.url, 'reel_x_save_video', this.currentData.extension);
         this.showMessage('Video download started!');
     }
 
     downloadAudio() {
         if (!this.currentData) return;
         
-        this.downloadFile(this.currentData.url, 'instagram_audio', 'mp3');
+        this.downloadFile(this.currentData.url, 'reel_x_save_audio', 'mp3');
         this.showMessage('Audio download started!');
     }
 
@@ -147,7 +131,7 @@ class InstaDownloader {
         if (!this.currentData) return;
         
         navigator.clipboard.writeText(this.currentData.url).then(() => {
-            this.showMessage('Link copied to clipboard!');
+            this.showMessage('Download link copied to clipboard!');
         }).catch(() => {
             this.showError('Failed to copy link');
         });
@@ -170,17 +154,17 @@ class InstaDownloader {
         }
     }
 
-    // UI Helper Methods
+    // UI Methods
     showLoading() {
         this.elements.loader.classList.remove('hidden');
         this.elements.downloadBtn.disabled = true;
-        this.elements.downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+        this.elements.downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
     }
 
     hideLoading() {
         this.elements.loader.classList.add('hidden');
         this.elements.downloadBtn.disabled = false;
-        this.elements.downloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Download Reel';
+        this.elements.downloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Download Instagram Video Now';
     }
 
     showError(message) {
@@ -194,6 +178,7 @@ class InstaDownloader {
 
     showResults() {
         this.elements.results.classList.remove('hidden');
+        this.elements.results.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     hideResults() {
@@ -201,17 +186,16 @@ class InstaDownloader {
     }
 
     showMessage(message) {
-        // Simple alert for now
-        alert(message);
+        alert(message); // Simple alert for now
     }
 
     getErrorMessage(error) {
         if (error.message.includes('Failed to fetch')) {
             return 'Network error: Please check your internet connection and try again.';
         } else if (error.message.includes('CORS')) {
-            return 'CORS error: Please try again with the Netlify function.';
+            return 'Browser security error: Please try refreshing the page.';
         } else {
-            return error.message || 'Failed to download reel. Please try again.';
+            return error.message || 'Failed to download video. Please check the URL and try again.';
         }
     }
 
@@ -224,7 +208,7 @@ class InstaDownloader {
     }
 }
 
-// Initialize the app
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new InstaDownloader();
+    new ReelXSave();
 });
